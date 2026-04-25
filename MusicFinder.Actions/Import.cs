@@ -3,8 +3,6 @@ using Microsoft.Extensions.Options;
 using MusicFinder.Models.Settings;
 using MusicFinder.Models;
 using nietras.SeparatedValues;
-using System.Data.Entity;
-
 namespace MusicFinder.Actions;
 
 public class Import(IOptions<MusicFinderSettings> options, MusicFinderContext context, ILogger<Import> logger)
@@ -29,7 +27,7 @@ public class Import(IOptions<MusicFinderSettings> options, MusicFinderContext co
         return Task.CompletedTask;
     }
 
-    private  void ImportFromCsv(string path, char delimiter)
+    private void ImportFromCsv(string path, char delimiter)
     {
         var albums = new List<Album>();
 
@@ -40,7 +38,10 @@ public class Import(IOptions<MusicFinderSettings> options, MusicFinderContext co
             var artist = row["Artist"].ToString();
             if (!string.IsNullOrEmpty(name) && !string.IsNullOrEmpty(artist))
             {
-                albums.Add(new Album { Name = name, Artist = artist });
+                if (!context.Albums.Any(a => a.Name == name && a.Artist == artist))
+                {
+                    albums.Add(new Album { Name = name, Artist = artist });
+                }
             }
         }
 

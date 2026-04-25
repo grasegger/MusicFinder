@@ -1,8 +1,9 @@
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 
 namespace MusicFinder.Models;
 
-[Table("Albums")]
+[Index(nameof(Name), nameof(Artist), IsUnique = true)]
 public class Album
 {
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

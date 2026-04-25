@@ -1,14 +1,15 @@
-using System.Data.Entity;
-using System.Data.Entity.ModelConfiguration.Conventions;
+
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using MusicFinder.Models.Settings;
 
 namespace MusicFinder.Models;
 
-public class MusicFinderContext() : DbContext("MusicFinder")
+public class MusicFinderContext(DbContextOptions<MusicFinderContext> options, IOptions<MusicFinderSettings> settings) : DbContext(options)
 {
     public DbSet<Album> Albums { get; set; } = null!;
 
-    protected override void OnModelCreating(DbModelBuilder modelBuilder)
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        modelBuilder.Conventions.Remove<PluralizingTableNameConvention>();
     }
 }
