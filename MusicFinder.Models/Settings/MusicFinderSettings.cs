@@ -19,4 +19,5 @@ public class MusicFinderSettings
     public char ImportDelimiter { get; set; } = ',';
     #endregion
 
+    public List<Provider> Providers { get; set; } = [];
 }
