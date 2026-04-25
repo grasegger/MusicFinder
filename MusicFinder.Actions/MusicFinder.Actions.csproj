@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Abstractions" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" />
+    <PackageReference Include="Microsoft.Extensions.Options" />
+    <PackageReference Include="Sep" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../MusicFinder.Models/MusicFinder.Models.csproj" />
+    <ProjectReference Include="../MusicFinder.Services/MusicFinder.Services.csproj" />
+  </ItemGroup>
+</Project>

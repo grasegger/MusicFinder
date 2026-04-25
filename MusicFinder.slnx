@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="MusicFinder.CLI/MusicFinder.CLI.csproj" />
+  <Project Path="MusicFinder.Actions/MusicFinder.Actions.csproj" />
+  <Project Path="MusicFinder.Models/MusicFinder.Models.csproj" />
+</Solution>
