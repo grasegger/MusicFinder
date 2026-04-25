@@ -1,0 +1,11 @@
+- [] Discogs search
+- [] qobuz search
+- [] rebuy search
+- [] amazon search
+- [] qobuz search
+- [] dynamic search providers list (via config)
+- [] save prices for search providers
+- [] sync wishlist with beets (removing albums from wishlist if they are in collection)
+- [] add album to wishlist
+- [] sync wishlist with musicbrainz
+- [] sync collection with musicbrainz
