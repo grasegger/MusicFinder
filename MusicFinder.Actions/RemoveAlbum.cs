@@ -39,8 +39,6 @@ public class RemoveAlbum(ILogger<RemoveAlbum> logger, MusicFinderContext context
         context.Albums.Remove(existingAlbum);
         context.SaveChanges();
 
-        logger.LogInformation("Removed album '{Album}' by '{Artist}' from the database", album, artist);
-
         return Task.CompletedTask;
     }
 }

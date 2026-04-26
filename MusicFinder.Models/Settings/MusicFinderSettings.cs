@@ -19,4 +19,5 @@ public class MusicFinderSettings
     #endregion
 
     public List<Provider> Providers { get; set; } = [];
+    public int AlbumsToSearchPricesFor { get; set; } = 5;
 }

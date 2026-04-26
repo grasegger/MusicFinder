@@ -37,7 +37,7 @@ public class ScoreArtists(ILogger<ScoreArtists> logger, MusicFinderContext dbCon
         var comparisonsWithoutChange = 0;
         var totalComparisons = 0;
 
-        logger.LogInformation($"Starting ELO scoring with {artists.Count} artists. Type 'exit' to stop.\n");
+        logger.LogInformation("Starting ELO scoring with {count} artists. Type 'exit' to stop.\n", artists.Count);
 
         // Initial ratings
         foreach (var artist in artistNames)
@@ -92,12 +92,6 @@ public class ScoreArtists(ILogger<ScoreArtists> logger, MusicFinderContext dbCon
 
         SaveRatings(artistRatings);
         dbContext.SaveChanges();
-
-        logger.LogDebug("Final ELO Ratings:");
-        foreach (var artist in artistRatings.OrderByDescending(x => x.Value))
-        {
-            logger.LogDebug($"  {artist.Key}: {artist.Value:F1}");
-        }
 
         logger.LogInformation("Finished scoring artists.");
 

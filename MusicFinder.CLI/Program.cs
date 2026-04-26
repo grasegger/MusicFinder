@@ -9,6 +9,7 @@ using FluentMigrator.Runner;
 using MusicFinder.Models.Settings;
 using MusicFinder.Models;
 using MusicFinder.Actions;
+using MusicFinder.Models.Migrations;
 
 var actionTypes = typeof(CliHelp).Assembly.GetTypes()
             .Where(t => t.Namespace == "MusicFinder.Actions" && t.IsClass && !t.IsAbstract && t.IsVisible)

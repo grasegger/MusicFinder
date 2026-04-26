@@ -1,7 +1,4 @@
-- [] dynamic search providers list (via config)
-- [] sync wishlist with musicbrainz
-- [] sync collection with musicbrainz
 - [] sync new release from musicbrainz
-- [] add weight to albums
-- [] interactive elo rating system for albums
 - [] native host so a user script can send the price from the browser to the app
+- [] elo -> custom list of top 10 artists, bottom 10 artists, all that have a same score and random till 10%
+- [] refactor addpric to be in lib and also less parameters
