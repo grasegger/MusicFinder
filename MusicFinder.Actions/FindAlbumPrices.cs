@@ -48,8 +48,12 @@ public class FindAlbumPrices(ILogger<FindAlbumPrices> logger, MusicFinderContext
             {
                 var albumArtist = album.Artist.Replace("\"", "", StringComparison.InvariantCulture);
                 var albumName = album.Name.Replace("\"", "", StringComparison.InvariantCulture);
-                var url = provider.UrlTemplate.AbsoluteUri.Replace("{artist}", Uri.EscapeDataString(albumArtist), StringComparison.InvariantCulture)
-                                              .Replace("{album}", Uri.EscapeDataString(albumName), StringComparison.InvariantCulture);
+                var url = provider.UrlTemplate.AbsoluteUri;
+                var artistTemplate = Uri.EscapeDataString("{artist}");
+                var albumTemplate = Uri.EscapeDataString("{album}");
+                url = url.Replace(artistTemplate, Uri.EscapeDataString(albumArtist), StringComparison.InvariantCulture)
+                                              .Replace(albumTemplate, Uri.EscapeDataString(albumName), StringComparison.InvariantCulture);
+
 
                 try
                 {
