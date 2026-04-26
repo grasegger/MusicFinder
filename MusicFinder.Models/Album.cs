@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
@@ -7,7 +8,13 @@ namespace MusicFinder.Models;
 public class Album
 {
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public int Id { get; set; }
+    public long Id { get; set; }
+
+    [Required]
     public string Name { get; set; } = string.Empty;
+
+    [Required]
     public string Artist { get; set; } = string.Empty;
+
+    public ICollection<Price> Prices { get; set; } = [];
 }

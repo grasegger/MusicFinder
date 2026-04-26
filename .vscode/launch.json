@@ -11,13 +11,26 @@
             "preLaunchTask": "build",
             "program": "${workspaceFolder}/MusicFinder.CLI/bin/Debug/net10.0/MusicFinder.CLI.dll",
             "args": [
-                "--MusicFinder:Action", "FindAlbumPrices"
+                "--MusicFinder:Action",
+                "FindAlbumPrices"
+            ],
+            "cwd": "${workspaceFolder}/MusicFinder.CLI",
+            "stopAtEntry": false,
+            "console": "internalConsole"
+        },
+        {
+            "name": "MusicFinder.CLI Next",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/MusicFinder.CLI/bin/Debug/net10.0/MusicFinder.CLI.dll",
+            "args": [
+                "--MusicFinder:Action",
+                "Next"
             ],
             "cwd": "${workspaceFolder}/MusicFinder.CLI",
             "stopAtEntry": false,
             "console": "internalConsole"
         }
     ],
-
-
 }
