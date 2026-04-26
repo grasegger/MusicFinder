@@ -4,7 +4,7 @@ namespace MusicFinder.Models.Settings;
 
 public class MusicFinderSettings
 {
-    public string Action { get; set; } = "Help";
+    public string Action { get; set; } = "CliHelp";
 
     #region database settings
     public string DataDirectory { get; set; } = Xdg.Directories.BaseDirectory.DataHome ?? "." + Assembly.GetExecutingAssembly().GetName().Name ?? "MusicFinder";

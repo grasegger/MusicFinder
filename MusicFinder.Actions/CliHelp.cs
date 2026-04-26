@@ -1,13 +1,23 @@
 
-public static class CliHelp
+namespace MusicFinder.Actions;
+
+public class CliHelp
 {
-    public static void ShowHelp()
+    public static Task RunAsync(CancellationToken cancellationToken)
     {
         Console.WriteLine("MusicFinder CLI Help");
         Console.WriteLine("====================");
         Console.WriteLine();
         Console.WriteLine("Available Actions:");
-        Console.WriteLine("  Import - Import albums from a CSV file");
+        var actionTypes = typeof(CliHelp).Assembly.GetTypes()
+            .Where(t => t.Namespace == "MusicFinder.Actions" && t.IsClass && !t.IsAbstract && t.IsVisible)
+            .Select(t => t.Name)
+            .ToList();
+        foreach (var action in actionTypes)
+        {
+            Console.WriteLine($"  {action}");
+        }
+
         Console.WriteLine();
         Console.WriteLine("Usage:");
         Console.WriteLine("  dotnet run -- --MusicFinder:Action Import --MusicFinder:ImportPath path/to/file.csv");
@@ -26,5 +36,7 @@ public static class CliHelp
         Console.WriteLine("Examples:");
         Console.WriteLine("  dotnet run -- --MusicFinder:Action Help");
         Console.WriteLine("  dotnet run -- --MusicFinder:Action Import --MusicFinder:ImportPath albums.csv");
+
+        return Task.CompletedTask;
     }
 }
