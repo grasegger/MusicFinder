@@ -5,7 +5,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "MusicFinder.CLI BeetsDelete",
+            "name": "MusicFinder.CLI FindAlbumPrices",
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",

@@ -86,7 +86,7 @@ public class FindAlbumPrices(ILogger<FindAlbumPrices> logger, MusicFinderContext
                     }
                 }
 
-                AddPrice.SubmitPrice(album, provider.Name, price, dbContext, cancellationToken).Wait(cancellationToken);
+                Common.SubmitPrice(album, provider.Name, price, dbContext, cancellationToken).Wait(cancellationToken);
 
             }
         }

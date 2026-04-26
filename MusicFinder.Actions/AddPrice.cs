@@ -58,32 +58,9 @@ public class AddPrice(ILogger<AddPrice> logger, MusicFinderContext dbContext)
             priceInput = priceInput?.Replace('.', ',');
         }
 
-        await SubmitPrice(album, provider, price, dbContext, cancellationToken);
+        await Common.SubmitPrice(album, provider, price, dbContext, cancellationToken);
 
         await Task.CompletedTask;
     }
 
-    internal static async Task SubmitPrice(Album album, string provider, decimal price, MusicFinderContext dbContext, CancellationToken cancellationToken)
-    {
-        var existingPrice = await dbContext.Prices.FirstOrDefaultAsync(p => p.AlbumId == album.Id && p.Provider == provider, cancellationToken);
-        if (existingPrice != null)
-        {
-            existingPrice.Value = price;
-            existingPrice.LastUpdated = DateTime.UtcNow;
-            dbContext.Prices.Update(existingPrice);
-        }
-        else
-        {
-            var newPrice = new Price
-            {
-                AlbumId = album.Id,
-                Provider = provider,
-                Value = price,
-                LastUpdated = DateTime.UtcNow
-            };
-            await dbContext.Prices.AddAsync(newPrice, cancellationToken);
-        }
-
-        await dbContext.SaveChangesAsync(cancellationToken);
-    }
 }

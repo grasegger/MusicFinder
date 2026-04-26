@@ -22,77 +22,103 @@ public class ScoreArtists(ILogger<ScoreArtists> logger, MusicFinderContext dbCon
     {
         logger.LogInformation("Scoring artists based on ELO system...");
 
-        var artists = dbContext.Albums.Select(a => a.Artist).Distinct().ToList();
+        List<string> artists = [];
+
+        var topTen = dbContext.ArtistWeights.OrderByDescending(aw => aw.Weight).Take(10).Select(aw => aw.Artist).ToList();
+        var bottomTen = dbContext.ArtistWeights.OrderBy(aw => aw.Weight).Take(10).Select(aw => aw.Artist).ToList();
+
+        var nonUniqueScores = dbContext.ArtistWeights.ToList().GroupBy(aw => aw.Weight).Where(g => g.Count() > 1).SelectMany(g => g.Select(aw => aw.Artist)).ToList();
+
+        artists.AddRange(topTen);
+        artists.AddRange(bottomTen);
+        artists.AddRange(nonUniqueScores);
+
+        if (artists.Count < dbContext.Albums.Select(a => a.Artist).Distinct().Count() / 10)
+        {
+            var random = new Random();
+            var allArtists = dbContext.Albums.Select(a => a.Artist).Distinct().ToList();
+            while (artists.Count < dbContext.Albums.Select(a => a.Artist).Distinct().Count() / 10)
+            {
+                var randomArtist = allArtists[random.Next(allArtists.Count)];
+                if (!artists.Contains(randomArtist))
+                {
+                    artists.Add(randomArtist);
+                }
+            }
+        }
+
 
         if (artists.Count < 2)
         {
             logger.LogInformation("Not enough artists to score. Need at least 2 artists.");
-            return Task.CompletedTask;
+
         }
-
-        eloSystem = new EloSystem(new EloSettings(KValue, InitialRating));
-        var artistNames = InitializeRatings(artists, eloSystem);
-        var artistRatings = new Dictionary<string, double>();
-        var random = new Random();
-        var comparisonsWithoutChange = 0;
-        var totalComparisons = 0;
-
-
-        // Initial ratings
-        foreach (var artist in artistNames)
+        else
         {
-            var existing = dbContext.ArtistWeights.FirstOrDefault(aw => aw.Artist == artist);
-            artistRatings[artist] = existing != null ? (double)existing.Weight : InitialRating;
-        }
 
-        var previousRatings = new Dictionary<string, double>(artistRatings);
+            eloSystem = new EloSystem(new EloSettings(KValue, InitialRating));
+            var artistNames = InitializeRatings(artists, eloSystem);
+            var artistRatings = new Dictionary<string, double>();
+            var random = new Random();
+            var comparisonsWithoutChange = 0;
+            var totalComparisons = 0;
 
-        while (true)
-        {
-            var (artist1, artist2) = GetRandomPairing(artistNames, random);
 
-            DisplayComparison(artist1, artist2, artistRatings);
-            var userInput = GetUserInput();
-
-            if (userInput == "e")
+            // Initial ratings
+            foreach (var artist in artistNames)
             {
-                logger.LogInformation("ELO scoring completed by user.");
-                break;
+                var existing = dbContext.ArtistWeights.FirstOrDefault(aw => aw.Artist == artist);
+                artistRatings[artist] = existing != null ? (double)existing.Weight : InitialRating;
             }
 
-            if (!int.TryParse(userInput, out var choice) || choice < 0 || choice > 3)
+            var previousRatings = new Dictionary<string, double>(artistRatings);
+
+            while (true)
             {
-                logger.LogWarning("Invalid input {input}. Please enter 0, 1, or 2.", userInput);
-                break;
-            }
+                var (artist1, artist2) = GetRandomPairing(artistNames, random);
 
-            var result = ConvertChoiceToResult(choice);
-            eloSystem.AddResults([new Result(artist1, artist2, result)]);
-            totalComparisons++;
+                DisplayComparison(artist1, artist2, artistRatings);
+                var userInput = GetUserInput();
 
-            // Update ratings from eloSystem
-            UpdateRatingsFromEloSystem(artistRatings);
-
-            if (totalComparisons >= MinComparisonsForStability && HasRatingsStabilized(previousRatings, artistRatings))
-            {
-                comparisonsWithoutChange++;
-                if (comparisonsWithoutChange >= StabilityThreshold)
+                if (userInput == "e")
                 {
+                    logger.LogInformation("ELO scoring completed by user.");
                     break;
                 }
+
+                if (!int.TryParse(userInput, out var choice) || choice < 0 || choice > 3)
+                {
+                    logger.LogWarning("Invalid input {input}. Please enter 0, 1, or 2.", userInput);
+                    break;
+                }
+
+                var result = ConvertChoiceToResult(choice);
+                eloSystem.AddResults([new Result(artist1, artist2, result)]);
+                totalComparisons++;
+
+                // Update ratings from eloSystem
+                UpdateRatingsFromEloSystem(artistRatings);
+
+                if (totalComparisons >= MinComparisonsForStability && HasRatingsStabilized(previousRatings, artistRatings))
+                {
+                    comparisonsWithoutChange++;
+                    if (comparisonsWithoutChange >= StabilityThreshold)
+                    {
+                        break;
+                    }
+                }
+                else
+                {
+                    comparisonsWithoutChange = 0;
+                    previousRatings = new Dictionary<string, double>(artistRatings);
+                }
             }
-            else
-            {
-                comparisonsWithoutChange = 0;
-                previousRatings = new Dictionary<string, double>(artistRatings);
-            }
+
+            SaveRatings(artistRatings);
+            await dbContext.SaveChangesAsync(cancellationToken);
+
+            logger.LogInformation("Finished scoring artists.");
         }
-
-        SaveRatings(artistRatings);
-        await dbContext.SaveChangesAsync(cancellationToken);
-
-        logger.LogInformation("Finished scoring artists.");
-
     }
 
     private List<string> InitializeRatings(List<string> artists, EloSystem eloSystem)
