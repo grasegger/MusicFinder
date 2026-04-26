@@ -32,24 +32,24 @@ public class FindAlbumPrices(ILogger<FindAlbumPrices> logger, MusicFinderContext
 
         if (dbContext.Prices.Count() > settings.AlbumsToSearchPricesFor)
         {
-            await SearchPricesAsync([albums.First()], cancellationToken);
+            await SearchPricesAsync([albums[0]], cancellationToken).ConfigureAwait(false);
         }
         else
         {
-            await SearchPricesAsync(albums, cancellationToken);
+            await SearchPricesAsync(albums, cancellationToken).ConfigureAwait(false);
         }
     }
 
-    private Task SearchPricesAsync(IEnumerable<Album> albums, CancellationToken cancellationToken)
+    private async Task SearchPricesAsync(IEnumerable<Album> albums, CancellationToken cancellationToken)
     {
         foreach (var album in albums)
         {
             foreach (var provider in settings.Providers)
             {
-                var albumArtist = album.Artist.Replace("\"", "");
-                var albumName = album.Name.Replace("\"", "");
-                var url = provider.UrlTemplate.Replace("{artist}", Uri.EscapeDataString(albumArtist))
-                                              .Replace("{album}", Uri.EscapeDataString(albumName));
+                var albumArtist = album.Artist.Replace("\"", "", StringComparison.InvariantCulture);
+                var albumName = album.Name.Replace("\"", "", StringComparison.InvariantCulture);
+                var url = provider.UrlTemplate.AbsoluteUri.Replace("{artist}", Uri.EscapeDataString(albumArtist), StringComparison.InvariantCulture)
+                                              .Replace("{album}", Uri.EscapeDataString(albumName), StringComparison.InvariantCulture);
 
                 try
                 {
@@ -59,15 +59,17 @@ public class FindAlbumPrices(ILogger<FindAlbumPrices> logger, MusicFinderContext
                         UseShellExecute = true
                     });
                 }
+#pragma warning disable CA1031
                 catch (Exception ex)
                 {
                     logger.LogError(ex, "Failed to open URL: {Url}", url);
                 }
+#pragma warning restore CA1031
 
                 Console.Write($"Enter price for {album.Artist} - {album.Name} on {provider}: ");
 
                 var input = Console.ReadLine() ?? string.Empty;
-                input = input.Replace(".", ","); // handle comma as decimal separator
+                input = input.Replace(".", ",", StringComparison.InvariantCulture); // handle comma as decimal separator
 
                 if (input == "e")
                 {
@@ -79,18 +81,16 @@ public class FindAlbumPrices(ILogger<FindAlbumPrices> logger, MusicFinderContext
                 {
                     Console.Write("Invalid price. Please enter a valid decimal number: ");
                     input = Console.ReadLine() ?? string.Empty;
-                    input = input.Replace(".", ","); // handle comma as decimal separator
+                    input = input.Replace(".", ",", StringComparison.InvariantCulture); // handle comma as decimal separator
                     if (input == "e")
                     {
                         continue;
                     }
                 }
 
-                Common.SubmitPrice(album, provider.Name, price, dbContext, cancellationToken).Wait(cancellationToken);
+                await Common.SubmitPrice(album, provider.Name, price, dbContext, cancellationToken).ConfigureAwait(false);
 
             }
         }
-
-        return Task.CompletedTask;
     }
 }

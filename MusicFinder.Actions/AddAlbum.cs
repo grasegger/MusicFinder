@@ -41,7 +41,7 @@ public class AddAlbum(ILogger<AddAlbum> logger, MusicFinderContext context)
         else
         {
             context.Albums.Add(newAlbum);
-            await context.SaveChangesAsync(cancellationToken);
+            await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
         }
     }
 }

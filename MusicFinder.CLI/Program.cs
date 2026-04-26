@@ -27,10 +27,7 @@ var builder = Host.CreateDefaultBuilder(args)
                 .ScanIn(typeof(Albums).Assembly).For.All());
 
         services.AddDbContext<MusicFinderContext>(
-            options =>
-            {
-                options.UseSqlite(GetConnectionString(hostContext));
-            }
+            options => options.UseSqlite(GetConnectionString(hostContext))
         );
 
         foreach (var actionType in actionTypes)
@@ -54,7 +51,7 @@ host.Services.GetRequiredService(targetAction);
 await ((dynamic)host.Services.GetRequiredService(targetAction)).RunAsync(CancellationToken.None);
 
 
-await host.StopAsync();
+await host.StopAsync().ConfigureAwait(false);
 
 static string GetConnectionString(HostBuilderContext hostContext)
 {

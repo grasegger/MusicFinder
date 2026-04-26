@@ -2,6 +2,7 @@
     "recommendations": [
         "bootta11.todotxt-language",
         "ms-dotnettools.csdevkit",
-        "jmrog.vscode-nuget-package-manager"
+        "jmrog.vscode-nuget-package-manager",
+        "gruntfuggly.triggertaskonsave"
     ]
 }

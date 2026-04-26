@@ -28,7 +28,7 @@ public class AddPrice(ILogger<AddPrice> logger, MusicFinderContext dbContext)
             artist = Console.ReadLine();
         }
 
-        var album = await dbContext.Albums.FirstOrDefaultAsync(a => a.Name == title && a.Artist == artist, cancellationToken);
+        var album = await dbContext.Albums.FirstOrDefaultAsync(a => a.Name == title && a.Artist == artist, cancellationToken).ConfigureAwait(false);
         if (album == null)
         {
             logger.LogWarning("Album '{Title}' by '{Artist}' not found in the database.", title, artist);
@@ -58,9 +58,8 @@ public class AddPrice(ILogger<AddPrice> logger, MusicFinderContext dbContext)
             priceInput = priceInput?.Replace('.', ',');
         }
 
-        await Common.SubmitPrice(album, provider, price, dbContext, cancellationToken);
+        await Common.SubmitPrice(album, provider, price, dbContext, cancellationToken).ConfigureAwait(false);
 
-        await Task.CompletedTask;
     }
 
 }

@@ -88,7 +88,7 @@ public class ScoreArtists(ILogger<ScoreArtists> logger, MusicFinderContext dbCon
 
                 if (!int.TryParse(userInput, out var choice) || choice < 0 || choice > 3)
                 {
-                    logger.LogWarning("Invalid input {input}. Please enter 0, 1, or 2.", userInput);
+                    logger.LogWarning("Invalid input {UserInput}. Please enter 0, 1, or 2.", userInput);
                     break;
                 }
 
@@ -115,7 +115,7 @@ public class ScoreArtists(ILogger<ScoreArtists> logger, MusicFinderContext dbCon
             }
 
             SaveRatings(artistRatings);
-            await dbContext.SaveChangesAsync(cancellationToken);
+            await dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 
             logger.LogInformation("Finished scoring artists.");
         }

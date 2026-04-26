@@ -1,7 +1,7 @@
 
 namespace MusicFinder.Actions;
 
-public class CliHelp
+public static class CliHelp
 {
     public static Task RunAsync()
     {

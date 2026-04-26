@@ -4,12 +4,12 @@ using MusicFinder.Models;
 
 namespace MusicFinder.Actions;
 
-internal class Common
+internal static class Common
 {
 
     internal static async Task SubmitPrice(Album album, string provider, decimal price, MusicFinderContext dbContext, CancellationToken cancellationToken)
     {
-        var existingPrice = await dbContext.Prices.FirstOrDefaultAsync(p => p.AlbumId == album.Id && p.Provider == provider, cancellationToken);
+        var existingPrice = await dbContext.Prices.FirstOrDefaultAsync(p => p.AlbumId == album.Id && p.Provider == provider, cancellationToken).ConfigureAwait(false);
         if (existingPrice != null)
         {
             existingPrice.Value = price;
@@ -25,9 +25,9 @@ internal class Common
                 Value = price,
                 LastUpdated = DateTime.UtcNow
             };
-            await dbContext.Prices.AddAsync(newPrice, cancellationToken);
+            await dbContext.Prices.AddAsync(newPrice, cancellationToken).ConfigureAwait(false);
         }
 
-        await dbContext.SaveChangesAsync(cancellationToken);
+        await dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
     }
 }

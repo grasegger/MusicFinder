@@ -28,7 +28,7 @@ public class BeetsConfig
             return Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
         }
 
-        if (path.StartsWith("~" + Path.DirectorySeparatorChar) || path.StartsWith("~" + Path.AltDirectorySeparatorChar))
+        if (path.StartsWith("~" + Path.DirectorySeparatorChar, StringComparison.InvariantCulture) || path.StartsWith("~" + Path.AltDirectorySeparatorChar, StringComparison.InvariantCultureIgnoreCase))
         {
             var remainder = path[2..];
             return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), remainder);

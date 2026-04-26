@@ -16,5 +16,5 @@ public class Album
     [Required]
     public string Artist { get; set; } = string.Empty;
 
-    public ICollection<Price> Prices { get; set; } = [];
+    public ICollection<Price> Prices { get; } = [];
 }

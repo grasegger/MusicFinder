@@ -1,0 +1,10 @@
+{
+    "triggerTaskOnSave.tasks": {
+        "build": [
+            "src/**/*.cs"
+        ],
+        "format": [
+            "src/**/*/cs"
+        ]
+    }
+}

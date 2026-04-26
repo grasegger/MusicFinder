@@ -25,6 +25,10 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageVersion>
+    <PackageVersion Include="Roslynator.Formatting.Analyzers" Version="4.15.0">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageVersion>
     <PackageVersion Include="Sep" Version="0.12.5" />
     <PackageVersion Include="Xdg.Directories" Version="0.1.2" />
     <PackageVersion Include="YamlDotNet" Version="17.0.1" />

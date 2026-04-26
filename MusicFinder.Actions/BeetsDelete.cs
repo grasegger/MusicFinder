@@ -11,11 +11,11 @@ public class BeetsDelete(ILogger<BeetsDelete> logger, MusicFinderContext context
     private readonly ILogger<BeetsDelete> logger = logger ?? throw new ArgumentNullException(nameof(logger));
     private readonly MusicFinderContext context = context ?? throw new ArgumentNullException(nameof(context));
 
-    public async Task RunAsync()
+    public async Task RunAsync(CancellationToken cancellationToken)
     {
         logger.LogInformation("Running BeetsDelete action...");
 
-        string output = await ReadBeetsConfig();
+        string output = await ReadBeetsConfig(cancellationToken).ConfigureAwait(false);
 
         var deserializer = new DeserializerBuilder()
             .IgnoreUnmatchedProperties()
@@ -29,7 +29,7 @@ public class BeetsDelete(ILogger<BeetsDelete> logger, MusicFinderContext context
         }
 
         var existing = GetAlbumsFromBeets(beetsConfig.library);
-        if (existing.Count != 0 == false)
+        if (existing.Count == 0)
         {
             logger.LogInformation("No albums found in beets library.");
             return;
@@ -51,9 +51,9 @@ public class BeetsDelete(ILogger<BeetsDelete> logger, MusicFinderContext context
         }
     }
 
-    private static async Task<string> ReadBeetsConfig()
+    private static async Task<string> ReadBeetsConfig(CancellationToken cancellationToken)
     {
-        var proc = new Process
+        using var proc = new Process
         {
             StartInfo = new ProcessStartInfo
             {
@@ -66,8 +66,8 @@ public class BeetsDelete(ILogger<BeetsDelete> logger, MusicFinderContext context
         };
 
         proc.Start();
-        var output = await proc.StandardOutput.ReadToEndAsync();
-        proc.WaitForExit();
+        var output = await proc.StandardOutput.ReadToEndAsync(cancellationToken).ConfigureAwait(false);
+        await proc.WaitForExitAsync(cancellationToken).ConfigureAwait(false);
         return output;
     }
 

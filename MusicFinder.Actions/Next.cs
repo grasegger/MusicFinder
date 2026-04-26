@@ -5,7 +5,7 @@ using MusicFinder.Models;
 
 namespace MusicFinder.Actions;
 
-public class Next(ILogger<Next> logger, MusicFinderContext context)
+public class WhatToBuy(MusicFinderContext context)
 {
 
     public async Task RunAsync(CancellationToken cancellationToken)
@@ -14,13 +14,13 @@ public class Next(ILogger<Next> logger, MusicFinderContext context)
 
         // artists that have albums with prices
 
-        var artists = await context.ArtistWeights.Where(x => context.Albums.Where(a => a.Artist == x.Artist).Any(a => a.Prices.Any())).ToListAsync(cancellationToken);
+        var artists = await context.ArtistWeights.Where(x => context.Albums.Where(a => a.Artist == x.Artist).Any(a => a.Prices.Any())).ToListAsync(cancellationToken).ConfigureAwait(false);
 
         var artist = artists.OrderByDescending(x => x.Weight).Select(a => a.Artist).First();
 
-        var albums = await context.Albums.Where(x => x.Artist == artist).ToListAsync(cancellationToken);
+        var albums = await context.Albums.Where(x => x.Artist == artist).ToListAsync(cancellationToken).ConfigureAwait(false);
 
-        var prices = await context.Prices.Where(x => albums.Select(a => a.Id).Contains(x.AlbumId) && x.Value > 0).ToListAsync(cancellationToken: cancellationToken);
+        var prices = await context.Prices.Where(x => albums.Select(a => a.Id).Contains(x.AlbumId) && x.Value > 0).ToListAsync(cancellationToken: cancellationToken).ConfigureAwait(false);
 
         var price = prices.OrderBy(x => x.Value).FirstOrDefault();
 

@@ -1,3 +1,4 @@
+using System.Collections.ObjectModel;
 using System.Reflection;
 
 namespace MusicFinder.Models.Settings;
@@ -18,6 +19,6 @@ public class MusicFinderSettings
     public char ImportDelimiter { get; set; } = ',';
     #endregion
 
-    public List<Provider> Providers { get; set; } = [];
+    public Collection<Provider> Providers { get; } = [];
     public int AlbumsToSearchPricesFor { get; set; } = 5;
 }

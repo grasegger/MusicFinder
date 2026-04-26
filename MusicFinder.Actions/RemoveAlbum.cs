@@ -38,7 +38,7 @@ public class RemoveAlbum(ILogger<RemoveAlbum> logger, MusicFinderContext context
         else
         {
             context.Albums.Remove(existingAlbum);
-            await context.SaveChangesAsync(cancellationToken);
+            await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
         }
     }
 }
