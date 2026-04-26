@@ -2,16 +2,14 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Configuration;
 using System.Reflection;
-using MusicFinder.Models.Settings;
 using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.Options;
-using ActionEnum = MusicFinder.Models.Enums.Action;
-using MusicFinder.Actions;
-using MusicFinder.Actions.CLI;
-using MusicFinder.Models;
 using Microsoft.EntityFrameworkCore;
 using FluentMigrator.Runner;
-using MusicFinder.Models.Migrations;
+using MusicFinder.Models.Settings;
+using MusicFinder.Models;
+using MusicFinder.Actions;
+using ActionEnum = MusicFinder.Models.Enums.Action;
 
 var builder = Host.CreateDefaultBuilder(args)
     .ConfigureServices((hostContext, services) =>
@@ -32,6 +30,7 @@ var builder = Host.CreateDefaultBuilder(args)
         );
 
         services.AddScoped<Import>();
+        services.AddScoped<BeetsDelete>();
     });
 
 using var host = builder.Build();
@@ -48,6 +47,10 @@ if (Enum.TryParse(config.Value.Action, out ActionEnum action))
         case ActionEnum.Import:
             var importAction = host.Services.GetRequiredService<Import>();
             await importAction.RunAsync(CancellationToken.None);
+            break;
+        case ActionEnum.BeetsDelete:
+            var beetsDeleteAction = host.Services.GetRequiredService<BeetsDelete>();
+            await beetsDeleteAction.RunAsync(CancellationToken.None);
             break;
         case ActionEnum.Help:
         default:

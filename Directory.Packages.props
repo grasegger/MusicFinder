@@ -21,5 +21,6 @@
     <PackageVersion Include="Microsoft.Extensions.Options" Version="10.0.7" />
     <PackageVersion Include="Sep" Version="0.12.5" />
     <PackageVersion Include="Xdg.Directories" Version="0.1.2" />
+    <PackageVersion Include="YamlDotNet" Version="17.0.1" />
   </ItemGroup>
 </Project>

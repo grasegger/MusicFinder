@@ -1,7 +1,4 @@
-using System;
 using FluentMigrator;
-
-namespace MusicFinder.Models.Migrations;
 
 [Migration(0)]
 public class Albums : AutoReversingMigration

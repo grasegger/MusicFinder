@@ -1,7 +1,4 @@
-
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
-using MusicFinder.Models.Settings;
 
 namespace MusicFinder.Models;
 

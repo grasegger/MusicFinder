@@ -1,4 +1,3 @@
-namespace MusicFinder.Actions.CLI;
 
 public static class CliHelp
 {

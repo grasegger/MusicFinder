@@ -1,5 +1,3 @@
-using System;
-
 namespace MusicFinder.Models.Settings;
 
 public class Provider

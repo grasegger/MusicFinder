@@ -1,7 +1,6 @@
+using System.Reflection;
 
 namespace MusicFinder.Models.Settings;
-
-using System.Reflection;
 
 public class MusicFinderSettings
 {
