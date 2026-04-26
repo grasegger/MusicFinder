@@ -9,7 +9,10 @@ using FluentMigrator.Runner;
 using MusicFinder.Models.Settings;
 using MusicFinder.Models;
 using MusicFinder.Actions;
-using ActionEnum = MusicFinder.Models.Enums.Action;
+
+var actionTypes = typeof(CliHelp).Assembly.GetTypes()
+            .Where(t => t.Namespace == "MusicFinder.Actions" && t.IsClass && !t.IsAbstract && t.IsVisible)
+            .ToList();
 
 var builder = Host.CreateDefaultBuilder(args)
     .ConfigureServices((hostContext, services) =>
@@ -29,8 +32,10 @@ var builder = Host.CreateDefaultBuilder(args)
             }
         );
 
-        services.AddScoped<Import>();
-        services.AddScoped<BeetsDelete>();
+        foreach (var actionType in actionTypes)
+        {
+            services.AddScoped(actionType);
+        }
     });
 
 using var host = builder.Build();
@@ -40,29 +45,12 @@ runner.MigrateUp();
 
 var config = host.Services.GetRequiredService<IOptions<MusicFinderSettings>>();
 
-if (Enum.TryParse(config.Value.Action, out ActionEnum action))
-{
-    switch (action)
-    {
-        case ActionEnum.Import:
-            var importAction = host.Services.GetRequiredService<Import>();
-            await importAction.RunAsync(CancellationToken.None);
-            break;
-        case ActionEnum.BeetsDelete:
-            var beetsDeleteAction = host.Services.GetRequiredService<BeetsDelete>();
-            await beetsDeleteAction.RunAsync(CancellationToken.None);
-            break;
-        case ActionEnum.Help:
-        default:
-            CliHelp.ShowHelp();
-            break;
-    }
-}
-else
-{
-    Console.WriteLine($"Invalid action: {config.Value.Action}");
-    CliHelp.ShowHelp();
-}
+
+var removeAlbumActionType = actionTypes.FirstOrDefault(t => t.Name == config.Value.Action) ?? typeof(CliHelp);
+
+Console.WriteLine($"Running action '{config.Value.Action}'");
+host.Services.GetRequiredService(removeAlbumActionType);
+await ((dynamic)host.Services.GetRequiredService(removeAlbumActionType)).RunAsync(CancellationToken.None);
 
 
 await host.StopAsync();
