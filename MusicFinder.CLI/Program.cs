@@ -10,27 +10,24 @@ using MusicFinder.Actions;
 using MusicFinder.Actions.CLI;
 using MusicFinder.Models;
 using Microsoft.EntityFrameworkCore;
+using FluentMigrator.Runner;
+using MusicFinder.Models.Migrations;
 
 var builder = Host.CreateDefaultBuilder(args)
     .ConfigureServices((hostContext, services) =>
     {
         services.Configure<MusicFinderSettings>(hostContext.Configuration.GetSection("MusicFinder"));
 
+        services.AddFluentMigratorCore()
+            .ConfigureRunner(rb => rb
+                .AddSQLite()
+                .WithGlobalConnectionString(GetConnectionString(hostContext))
+                .ScanIn(typeof(Albums).Assembly).For.All());
+
         services.AddDbContext<MusicFinderContext>(
             options =>
             {
-                var settings = hostContext.Configuration.GetSection("MusicFinder").Get<MusicFinderSettings>() ?? new MusicFinderSettings();
-
-                var dataDir = string.IsNullOrEmpty(settings.DataDirectory) ? Xdg.Directories.BaseDirectory.DataHome ?? "." : settings.DataDirectory;
-                var musicDir = Path.Combine(dataDir, Assembly.GetExecutingAssembly().GetName().Name ?? "MusicFinder");
-                Directory.CreateDirectory(musicDir);
-                var dbPath = Path.Combine(musicDir, settings.DatabaseName);
-                if (!File.Exists(dbPath))
-                {
-                    File.Create(dbPath).Close();
-                }
-                var connectionString = new SqliteConnectionStringBuilder { DataSource = dbPath }.ToString();
-                options.UseSqlite(connectionString);
+                options.UseSqlite(GetConnectionString(hostContext));
             }
         );
 
@@ -39,8 +36,8 @@ var builder = Host.CreateDefaultBuilder(args)
 
 using var host = builder.Build();
 
-var db = host.Services.GetRequiredService<MusicFinderContext>();
-await db.Database.MigrateAsync();
+var runner = host.Services.GetRequiredService<IMigrationRunner>();
+runner.MigrateUp();
 
 var config = host.Services.GetRequiredService<IOptions<MusicFinderSettings>>();
 
@@ -66,3 +63,18 @@ else
 
 
 await host.StopAsync();
+
+static string GetConnectionString(HostBuilderContext hostContext)
+{
+    var settings = hostContext.Configuration.GetSection("MusicFinder").Get<MusicFinderSettings>() ?? new MusicFinderSettings();
+
+    var dataDir = string.IsNullOrEmpty(settings.DataDirectory) ? Xdg.Directories.BaseDirectory.DataHome ?? "." : settings.DataDirectory;
+    var musicDir = Path.Combine(dataDir, Assembly.GetExecutingAssembly().GetName().Name ?? "MusicFinder");
+    Directory.CreateDirectory(musicDir);
+    var dbPath = Path.Combine(musicDir, settings.DatabaseName);
+
+
+    var connectionString = new SqliteConnectionStringBuilder { DataSource = dbPath }.ToString();
+
+    return connectionString;
+}
