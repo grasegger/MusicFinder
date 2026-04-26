@@ -46,11 +46,11 @@ runner.MigrateUp();
 var config = host.Services.GetRequiredService<IOptions<MusicFinderSettings>>();
 
 
-var removeAlbumActionType = actionTypes.FirstOrDefault(t => t.Name == config.Value.Action) ?? typeof(CliHelp);
+var targetAction = actionTypes.FirstOrDefault(t => t.Name == config.Value.Action) ?? typeof(CliHelp);
 
 Console.WriteLine($"Running action '{config.Value.Action}'");
-host.Services.GetRequiredService(removeAlbumActionType);
-await ((dynamic)host.Services.GetRequiredService(removeAlbumActionType)).RunAsync(CancellationToken.None);
+host.Services.GetRequiredService(targetAction);
+await ((dynamic)host.Services.GetRequiredService(targetAction)).RunAsync(CancellationToken.None);
 
 
 await host.StopAsync();

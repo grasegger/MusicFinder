@@ -5,6 +5,7 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageVersion Include="CommandLineParser" Version="2.9.1" />
+    <PackageVersion Include="Elo" Version="0.3.0" />
     <PackageVersion Include="EntityFramework" Version="6.5.1" />
     <PackageVersion Include="FluentMigrator" Version="8.0.1" />
     <PackageVersion Include="FluentMigrator.Runner" Version="8.0.1" />

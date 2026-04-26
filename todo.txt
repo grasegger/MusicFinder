@@ -4,6 +4,4 @@
 - [] sync new release from musicbrainz
 - [] add weight to albums
 - [] interactive elo rating system for albums
-- [] add weight to artists
-- [] interactive elo rating system for artists
 - [] native host so a user script can send the price from the browser to the app
