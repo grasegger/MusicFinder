@@ -1,2 +1,6 @@
+
+- [] move artists to own table
+- [] sync artists musicbrainz id
 - [] sync new release from musicbrainz
+- [] user script to copy price
 - [] native host so a user script can send the price from the browser to the app
