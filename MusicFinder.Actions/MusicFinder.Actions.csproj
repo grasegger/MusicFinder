@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="Elo" />
+    <PackageReference Include="MetaBrainz.MusicBrainz" />
     <PackageReference Include="Microsoft.Data.Sqlite" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Abstractions" />
     <PackageReference Include="Microsoft.Extensions.Hosting" />
