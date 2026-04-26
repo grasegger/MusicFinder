@@ -12,7 +12,7 @@ public class Import(IOptions<MusicFinderSettings> options, MusicFinderContext co
     private readonly MusicFinderContext context = context ?? throw new ArgumentNullException(nameof(context));
     private readonly ILogger<Import> logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
-    public Task RunAsync(CancellationToken cancellationToken = default)
+    public Task RunAsync()
     {
         var path = options.Value.ImportPath;
         if (string.IsNullOrWhiteSpace(path))

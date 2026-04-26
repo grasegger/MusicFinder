@@ -4,5 +4,5 @@ namespace MusicFinder.Actions;
 
 public class CheckPrices
 {
-    
+
 }

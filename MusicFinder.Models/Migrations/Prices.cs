@@ -16,7 +16,7 @@ public class Prices : AutoReversingMigration
             .WithColumn("LastUpdated").AsDateTime().NotNullable();
 
 
-            Create.UniqueConstraint("UQ_Prices_AlbumId_Provider").OnTable("Prices").Columns("AlbumId", "Provider");
+        Create.UniqueConstraint("UQ_Prices_AlbumId_Provider").OnTable("Prices").Columns("AlbumId", "Provider");
     }
 
 }

@@ -11,7 +11,7 @@ public class BeetsDelete(ILogger<BeetsDelete> logger, MusicFinderContext context
     private readonly ILogger<BeetsDelete> logger = logger ?? throw new ArgumentNullException(nameof(logger));
     private readonly MusicFinderContext context = context ?? throw new ArgumentNullException(nameof(context));
 
-    public async Task RunAsync(CancellationToken cancellationToken)
+    public async Task RunAsync()
     {
         logger.LogInformation("Running BeetsDelete action...");
 
@@ -29,13 +29,11 @@ public class BeetsDelete(ILogger<BeetsDelete> logger, MusicFinderContext context
         }
 
         var existing = GetAlbumsFromBeets(beetsConfig.library);
-        if (!existing.Any())
+        if (existing.Count != 0 == false)
         {
             logger.LogInformation("No albums found in beets library.");
             return;
         }
-
-        logger.LogInformation($"Found {existing.Count()} albums in beets library. Deleting from MusicFinder database...");
 
         DeleteExistingAlbums(existing);
 
@@ -73,7 +71,7 @@ public class BeetsDelete(ILogger<BeetsDelete> logger, MusicFinderContext context
         return output;
     }
 
-    private IEnumerable<Album> GetAlbumsFromBeets(string dbPath)
+    private static List<Album> GetAlbumsFromBeets(string dbPath)
     {
         var connectionString = new SqliteConnectionStringBuilder { DataSource = dbPath }.ToString();
 
@@ -88,7 +86,6 @@ public class BeetsDelete(ILogger<BeetsDelete> logger, MusicFinderContext context
         {
             var artist = reader.GetString(0);
             var name = reader.GetString(1);
-            logger.LogDebug($"Found album in beets library: {artist} - {name}");
             albums.Add(new Album { Artist = artist, Name = name });
         }
 

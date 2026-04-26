@@ -1,4 +1,4 @@
 - [] sync new release from musicbrainz
 - [] native host so a user script can send the price from the browser to the app
 - [] elo -> custom list of top 10 artists, bottom 10 artists, all that have a same score and random till 10%
-- [] refactor addpric to be in lib and also less parameters
+- [] refactor addpric to be in lib 

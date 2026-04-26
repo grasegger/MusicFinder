@@ -18,7 +18,7 @@ public class ScoreArtists(ILogger<ScoreArtists> logger, MusicFinderContext dbCon
     private const int MinComparisonsForStability = 10;
     private EloSystem? eloSystem;
 
-    public Task RunAsync(CancellationToken cancellationToken)
+    public async Task RunAsync(CancellationToken cancellationToken)
     {
         logger.LogInformation("Scoring artists based on ELO system...");
 
@@ -37,7 +37,6 @@ public class ScoreArtists(ILogger<ScoreArtists> logger, MusicFinderContext dbCon
         var comparisonsWithoutChange = 0;
         var totalComparisons = 0;
 
-        logger.LogInformation("Starting ELO scoring with {count} artists. Type 'exit' to stop.\n", artists.Count);
 
         // Initial ratings
         foreach (var artist in artistNames)
@@ -68,7 +67,7 @@ public class ScoreArtists(ILogger<ScoreArtists> logger, MusicFinderContext dbCon
             }
 
             var result = ConvertChoiceToResult(choice);
-            eloSystem.AddResults(new[] { new Result(artist1, artist2, result) });
+            eloSystem.AddResults([new Result(artist1, artist2, result)]);
             totalComparisons++;
 
             // Update ratings from eloSystem
@@ -79,7 +78,6 @@ public class ScoreArtists(ILogger<ScoreArtists> logger, MusicFinderContext dbCon
                 comparisonsWithoutChange++;
                 if (comparisonsWithoutChange >= StabilityThreshold)
                 {
-                    logger.LogInformation($"ELO ratings stabilized after {totalComparisons} comparisons.");
                     break;
                 }
             }
@@ -91,11 +89,10 @@ public class ScoreArtists(ILogger<ScoreArtists> logger, MusicFinderContext dbCon
         }
 
         SaveRatings(artistRatings);
-        dbContext.SaveChanges();
+        await dbContext.SaveChangesAsync(cancellationToken);
 
         logger.LogInformation("Finished scoring artists.");
 
-        return Task.CompletedTask;
     }
 
     private List<string> InitializeRatings(List<string> artists, EloSystem eloSystem)
@@ -110,7 +107,7 @@ public class ScoreArtists(ILogger<ScoreArtists> logger, MusicFinderContext dbCon
                 dbContext.ArtistWeights.Add(newWeight);
             }
 
-            eloSystem.AddResults(new[] { new Result(artist, artist, 0.5f) });
+            eloSystem.AddResults([new Result(artist, artist, 0.5f)]);
         }
 
         return artists;
@@ -193,10 +190,7 @@ public class ScoreArtists(ILogger<ScoreArtists> logger, MusicFinderContext dbCon
         foreach (var kvp in artistRatings)
         {
             var existing = dbContext.ArtistWeights.FirstOrDefault(aw => aw.Artist == kvp.Key);
-            if (existing != null)
-            {
-                existing.Weight = (decimal)kvp.Value;
-            }
+            existing?.Weight = (decimal)kvp.Value;
         }
     }
 }

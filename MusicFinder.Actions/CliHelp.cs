@@ -3,7 +3,7 @@ namespace MusicFinder.Actions;
 
 public class CliHelp
 {
-    public static Task RunAsync(CancellationToken cancellationToken)
+    public static Task RunAsync()
     {
         Console.WriteLine("MusicFinder CLI Help");
         Console.WriteLine("====================");

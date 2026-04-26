@@ -6,7 +6,7 @@ namespace MusicFinder.Actions;
 public class AddAlbum(ILogger<AddAlbum> logger, MusicFinderContext context)
 {
 
-    public Task RunAsync(CancellationToken cancellationToken)
+    public async Task RunAsync(CancellationToken cancellationToken)
     {
         logger.LogDebug("Running AddAlbum action");
 
@@ -37,14 +37,11 @@ public class AddAlbum(ILogger<AddAlbum> logger, MusicFinderContext context)
         if (context.Albums.Any(a => a.Name == album && a.Artist == artist))
         {
             logger.LogWarning("Album '{Album}' by '{Artist}' already exists in the database", album, artist);
-            return Task.CompletedTask;
         }
-        
-        context.Albums.Add(newAlbum);
-        context.SaveChanges();
-
-        logger.LogInformation("Added album '{Album}' by '{Artist}' to the database", album, artist);
-
-        return Task.CompletedTask;
+        else
+        {
+            context.Albums.Add(newAlbum);
+            await context.SaveChangesAsync(cancellationToken);
+        }
     }
 }

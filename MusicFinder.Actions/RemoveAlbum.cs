@@ -6,7 +6,7 @@ namespace MusicFinder.Actions;
 public class RemoveAlbum(ILogger<RemoveAlbum> logger, MusicFinderContext context)
 {
 
-    public Task RunAsync(CancellationToken cancellationToken)
+    public async Task RunAsync(CancellationToken cancellationToken)
     {
         logger.LogDebug("Running RemoveAlbum action");
 
@@ -33,12 +33,12 @@ public class RemoveAlbum(ILogger<RemoveAlbum> logger, MusicFinderContext context
         if (existingAlbum == null)
         {
             logger.LogWarning("Album '{Album}' by '{Artist}' does not exist in the database", album, artist);
-            return Task.CompletedTask;
-        }
-        
-        context.Albums.Remove(existingAlbum);
-        context.SaveChanges();
 
-        return Task.CompletedTask;
+        }
+        else
+        {
+            context.Albums.Remove(existingAlbum);
+            await context.SaveChangesAsync(cancellationToken);
+        }
     }
 }

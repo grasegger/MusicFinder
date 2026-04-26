@@ -30,7 +30,14 @@ public class FindAlbumPrices(ILogger<FindAlbumPrices> logger, MusicFinderContext
             albums.AddRange(artistAlbums);
         }
 
-        await SearchPricesAsync(albums, cancellationToken);
+        if (dbContext.Prices.Count() > settings.AlbumsToSearchPricesFor)
+        {
+            await SearchPricesAsync([albums.First()], cancellationToken);
+        }
+        else
+        {
+            await SearchPricesAsync(albums, cancellationToken);
+        }
     }
 
     private Task SearchPricesAsync(IEnumerable<Album> albums, CancellationToken cancellationToken)
@@ -44,7 +51,6 @@ public class FindAlbumPrices(ILogger<FindAlbumPrices> logger, MusicFinderContext
                 var url = provider.UrlTemplate.Replace("{artist}", Uri.EscapeDataString(albumArtist))
                                               .Replace("{album}", Uri.EscapeDataString(albumName));
 
-                // open the url in the default browser
                 try
                 {
                     System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
@@ -62,6 +68,11 @@ public class FindAlbumPrices(ILogger<FindAlbumPrices> logger, MusicFinderContext
 
                 var input = Console.ReadLine() ?? string.Empty;
                 input = input.Replace(".", ","); // handle comma as decimal separator
+
+                if (input == "e")
+                {
+                    continue;
+                }
                 decimal price;
 
                 while (!decimal.TryParse(input, out price))
@@ -69,10 +80,13 @@ public class FindAlbumPrices(ILogger<FindAlbumPrices> logger, MusicFinderContext
                     Console.Write("Invalid price. Please enter a valid decimal number: ");
                     input = Console.ReadLine() ?? string.Empty;
                     input = input.Replace(".", ","); // handle comma as decimal separator
-
+                    if (input == "e")
+                    {
+                        continue;
+                    }
                 }
 
-                AddPrice.SubmitPrice(album.Name, album.Artist, album, provider.Name, price, logger, dbContext, cancellationToken).Wait(cancellationToken);
+                AddPrice.SubmitPrice(album, provider.Name, price, dbContext, cancellationToken).Wait(cancellationToken);
 
             }
         }
